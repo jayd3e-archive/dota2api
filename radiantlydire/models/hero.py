@@ -1,6 +1,6 @@
-from d2.models.base import Base
-from d2.models.guide  import GuideModel
-from d2.models.skill  import SkillModel
+from radiantlydire.models.base import Base
+from radiantlydire.models.guide  import GuideModel
+from radiantlydire.models.skill  import SkillModel
 from sqlalchemy import ForeignKey
 from sqlalchemy import Column, Integer, String, Date, DateTime, Float
 from sqlalchemy.orm import relationship

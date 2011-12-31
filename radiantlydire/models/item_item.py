@@ -1,5 +1,5 @@
-from d2.models.base import Base
-from d2.models.item import ItemModel
+from radiantlydire.models.base import Base
+from radiantlydire.models.item import ItemModel
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship

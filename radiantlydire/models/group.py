@@ -1,4 +1,4 @@
-from d2.models.base import Base
+from radiantlydire.models.base import Base
 from sqlalchemy import Column, Integer, String, Date, DateTime
 
 class GroupModel(Base):

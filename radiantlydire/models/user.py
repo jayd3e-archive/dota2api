@@ -1,10 +1,10 @@
 import os
 from hashlib import sha1
-from d2.models.base import Base
-from d2.models.group  import GroupModel
-from d2.models.user_group  import UserGroupModel
-from d2.models.guide  import GuideModel
-from d2.models.comment import CommentModel
+from radiantlydire.models.base import Base
+from radiantlydire.models.group  import GroupModel
+from radiantlydire.models.user_group  import UserGroupModel
+from radiantlydire.models.guide  import GuideModel
+from radiantlydire.models.comment import CommentModel
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy.orm import relationship
 

@@ -2,15 +2,15 @@ import os
 import base64
 import unittest
 from datetime import datetime
-from d2.models.user import UserModel
-from d2.models.guide import GuideModel
-from d2.models.comment import CommentModel
-from d2.models.hero import HeroModel
-from d2.models.item import ItemModel
-from d2.models.guide_item import GuideItemModel
-from d2.models.item_item import ItemItemModel
-from d2.models.skill import SkillModel
-from d2.models.base import initializeBase
+from radiantlydire.models.user import UserModel
+from radiantlydire.models.guide import GuideModel
+from radiantlydire.models.comment import CommentModel
+from radiantlydire.models.hero import HeroModel
+from radiantlydire.models.item import ItemModel
+from radiantlydire.models.guide_item import GuideItemModel
+from radiantlydire.models.item_item import ItemItemModel
+from radiantlydire.models.skill import SkillModel
+from radiantlydire.models.base import initializeBase
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import engine_from_config
 
