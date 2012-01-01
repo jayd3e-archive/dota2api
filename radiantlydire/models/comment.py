@@ -9,6 +9,7 @@ class CommentModel(Base):
     body = Column(String(300))
     created = Column(DateTime)
     edited = Column(DateTime)
+    guide_id = Column(Integer, ForeignKey('guides.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
 
     def __init__(self, **fields):

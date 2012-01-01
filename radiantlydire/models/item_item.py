@@ -8,19 +8,19 @@ class ItemItemModel(Base):
     __tablename__ = 'items_items'
     
     id = Column(Integer, primary_key=True)
-    build_id = Column(Integer, ForeignKey('items.id'))
-    require_id = Column(Integer, ForeignKey('items.id'))
+    builds_id = Column(Integer, ForeignKey('items.id'))
+    requires_id = Column(Integer, ForeignKey('items.id'))
     
-    build = relationship(ItemModel,
-                         backref="build_items",
-                         primaryjoin=ItemModel.id==build_id)
-    require = relationship(ItemModel,
-                           backref="require_items",
-                           primaryjoin=ItemModel.id==require_id)
+    builds_into = relationship(ItemModel,
+                               backref="builds_into_items",
+                               primaryjoin=ItemModel.id==builds_id)
+    requires = relationship(ItemModel,
+                            backref="requires_items",
+                            primaryjoin=ItemModel.id==requires_id)
 
     def __init__(self, **fields):
         self.__dict__.update(fields)
 
     def __repr__(self):
-        return "<ItemItem('%s', '%s')>" % (self.build_id,
-                                           self.require_id)    
+        return "<ItemItem('%s', '%s')>" % (self.builds_id,
+                                           self.requires_id)    

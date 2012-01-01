@@ -3,13 +3,18 @@ import base64
 import unittest
 from datetime import datetime
 from radiantlydire.models.user import UserModel
-from radiantlydire.models.guide import GuideModel
 from radiantlydire.models.comment import CommentModel
 from radiantlydire.models.hero import HeroModel
 from radiantlydire.models.item import ItemModel
-from radiantlydire.models.guide_item import GuideItemModel
+from radiantlydire.models.guide import GuideModel
 from radiantlydire.models.item_item import ItemItemModel
 from radiantlydire.models.skill import SkillModel
+from radiantlydire.models.skill import SkillNoteModel
+from radiantlydire.models.build_item import BuildItemModel
+from radiantlydire.models.build_skill import BuildSkillModel
+from radiantlydire.models.item_build import ItemBuildModel
+from radiantlydire.models.skill_build import SkillBuildModel
+from radiantlydire.models.group import GroupModel
 from radiantlydire.models.base import initializeBase
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import engine_from_config
@@ -32,8 +37,11 @@ class TestModels(unittest.TestCase):
         comment = CommentModel(body="U Suck",
                                created=datetime.now(),
                                edited=datetime.now())
+        group = GroupModel(name="Adminz")
+
         user.guides.append(guide)
         user.comments.append(comment)
+        user.groups.append(group)
 
         session.add(user)
         session.flush()
@@ -43,7 +51,9 @@ class TestModels(unittest.TestCase):
         self.assertIn(guide, user.guides)
         self.assertEqual(comment.author, user)
         self.assertIn(comment, user.comments)
-        
+        self.assertIn(group, user.groups)
+        self.assertIn(user, group.users)
+    
     def testGuideModel(self):
         session = self.Session()
 
@@ -58,6 +68,17 @@ class TestModels(unittest.TestCase):
                          description="Badass fissure maker.")
         guide.hero = hero
 
+        comment = CommentModel(body="U Suck",
+                               created=datetime.now(),
+                               edited=datetime.now())
+        guide.comments.append(comment)
+
+        skill_build = SkillBuildModel(name="Awesome-o 5000 skill build")
+        guide.skill_builds.append(skill_build)
+
+        item_build = ItemBuildModel(name="Awesome-o 5000 item build")
+        guide.item_builds.append(item_build)
+
         session.add(guide)
         session.flush()
         self.assertTrue(str(guide).startswith('<Guide'),
@@ -66,6 +87,12 @@ class TestModels(unittest.TestCase):
         self.assertIn(guide, hero.guides)
         self.assertEqual(guide.author, user)
         self.assertIn(guide, user.guides)
+        self.assertEqual(guide, comment.guide)
+        self.assertIn(comment, guide.comments)
+        self.assertEqual(guide, skill_build.guide)
+        self.assertIn(skill_build, guide.skill_builds)
+        self.assertEqual(guide, item_build.guide)
+        self.assertIn(item_build, guide.item_builds)
         
     def testHeroModel(self):
         session = self.Session()
@@ -92,61 +119,100 @@ class TestModels(unittest.TestCase):
         self.assertEqual(hero.skills[0], q_skill)
         self.assertEqual(q_skill.hero, hero)
 
+    def testSkillModel(self):
+        session = self.Session()
+
+        q_skill = SkillModel(name="Bammo",
+                             image_name="bammo.png",
+                             description="This skill owns.")
+
+        hero = HeroModel(name="Earthshaker",
+                         description="Badass fissure maker.")
+
+        q_skill.hero = hero
+
+        session.add(q_skill)
+        session.flush()
+        self.assertTrue(str(q_skill).startswith('<Skill'),
+                        msg="str(SkillModel) must start with '<Skill'")
+        self.assertEqual(hero.skills[0], q_skill)
+        self.assertEqual(q_skill.hero, hero)
+    
+    def testSkillBuildModel(self):
+        session = self.Session()
+
+        skill_build = SkillBuildModel(name="Awesome-o 5000 skill build")
+
+        session.add(skill_build)
+        session.flush()
+        self.assertTrue(str(skill_build).startswith('<SkillBuild'),
+                        msg="str(SkillBuildModel) must start with '<SkillBuild'")
+    
+    def testBuildSkillModel(self):
+        session = self.Session()    
+
+        skill = SkillModel(id=5768,
+                           name="Skill of the Mighty",
+                           description="Kills a hero instantly.")
+        session.add(skill)
+        
+        skill_build = SkillBuildModel(id=5889,
+                                      name="Super Build",
+                                      created=datetime.now(),
+                                      edited=datetime.now())
+        session.add(skill_build)
+
+        build_skill = BuildSkillModel(build_id=5889,
+                                     skill_id=5768,
+                                     level="starting")
+        session.add(build_skill)
+        session.flush()
+        self.assertTrue(str(build_skill).startswith('<BuildSkill'),
+                        msg="str(BuildSkillModel) must start with '<BuildSkill'")
+        self.assertIn(skill, skill_build.skills)
+        self.assertIn(build_skill, skill.build_skills)
+        self.assertIn(build_skill, skill_build.build_skills)
+        self.assertEqual(skill, build_skill.skill)
+        self.assertEqual(skill_build, build_skill.build)
+
+    def testSkillNoteModel(self):
+        session = self.Session()
+
+        q_skill = SkillModel(id=5760,
+                             name="Bammo",
+                             image_name="bammo.png",
+                             description="This skill owns.")
+
+        skill_note = SkillNoteModel(note="This is an interesting note about the skill.")
+        q_skill.skill_notes.append(skill_note)
+
+        session.add(q_skill)
+        session.flush()
+        self.assertTrue(str(skill_note).startswith('<SkillNote'),
+                        msg="str(SkillNoteModel) must start with '<SkillNote'")
+        self.assertIn(skill_note, q_skill.skill_notes)
+        self.assertEqual(skill_note.skill, q_skill)
+
     def testItemModel(self):
         session = self.Session()
 
-        item = ItemModel(name="Sword of 1,000 Truths",
-                         description="Stan needs this item, GAWD sharon!")
+        item_tier1 = ItemModel(name="Sword of 1,000 Truths",
+                         description="Stan needs this item, GAWD sharon!",
+                         tier=1,
+                         tier_parent_id=5689)
 
-        session.add(item)
+        item_tier2 = ItemModel(id=5689,
+                               name="Sword of 1,000 Truths",
+                               description="Stan needs this item, GAWD sharon!",
+                               tier=2)
+
+        session.add(item_tier1)
+        session.add(item_tier2)
         session.flush()
-        self.assertTrue(str(item).startswith('<Item'),
+        self.assertTrue(str(item_tier1).startswith('<Item'),
                         msg="str(ItemModel) must start with '<Item'")
-        
-    def testCommentModel(self):
-        session = self.Session()
-
-        comment = CommentModel(body="U Suck",
-                               created=datetime.now(),
-                               edited=datetime.now())
-        user = UserModel("jayd3e", "secret", email="jd.dallago@gmail.com")
-        comment.author = user
-        
-        session.add(comment)
-        session.flush()
-        self.assertTrue(str(comment).startswith('<Comment'),
-                        msg="str(CommentModel) must start with '<Comment'")
-        self.assertEqual(comment.author, user)
-        self.assertIn(comment, user.comments)
-
-    def testGuideItemModel(self):
-        session = self.Session()    
-
-        item = ItemModel(id=5768,
-                         name="Sword of 1,000 Truths",
-                         description="Stan needs this item, GAWD sharon!")
-        session.add(item)
-        
-        guide = GuideModel(id=5889,
-                           name="Super Guide",
-                           created=datetime.now(),
-                           edited=datetime.now())
-        session.add(guide)
-
-        guide_item = GuideItemModel(guide_id=5889,
-                                    item_id=5768,
-                                    section="starting")
-        session.add(guide_item)
-        session.flush()
-        self.assertTrue(str(guide_item).startswith('<GuideItem'),
-                        msg="str(GuideItemModel) must start with '<GuideItem'")
-        self.assertIn(guide, item.guides)
-        self.assertIn(item, guide.items)
-        self.assertIn(guide_item, item.guide_item)
-        self.assertIn(guide_item, guide.guide_item)
-        self.assertEqual(item, guide_item.item)
-        self.assertEqual(guide, guide_item.guide)
-
+        self.assertEqual(item_tier1.tier_parent, item_tier2)
+    
     def testItemItemModel(self):
         session = self.Session()
 
@@ -177,12 +243,12 @@ class TestModels(unittest.TestCase):
         #  -------
         #  |     |
         # 5701  5703
-        item_item0 = ItemItemModel(build_id=5700,
-                                   require_id=5701)
-        item_item1 = ItemItemModel(build_id=5702,
-                                   require_id=5701)
-        item_item2 = ItemItemModel(build_id=5702,
-                                   require_id=5703)
+        item_item0 = ItemItemModel(builds_id=5700,
+                                   requires_id=5701)
+        item_item1 = ItemItemModel(builds_id=5702,
+                                   requires_id=5701)
+        item_item2 = ItemItemModel(builds_id=5702,
+                                   requires_id=5703)
         item_items = [item_item0, item_item1, item_item2]
         for item_item in item_items:
             session.add(item_item)
@@ -196,22 +262,71 @@ class TestModels(unittest.TestCase):
         self.assertIn(item3, item2.requires)
         self.assertIn(item2, item1.builds)
         self.assertIn(item2, item3.builds)
-
-    def testSkillModel(self):
+    
+    def testItemBuildModel(self):
         session = self.Session()
 
-        q_skill = SkillModel(name="Bammo",
-                             image_name="bammo.png",
-                             description="This skill owns.")
+        item_build = ItemBuildModel(name="Awesome-o 5000 item build")
 
-        hero = HeroModel(name="Earthshaker",
-                         description="Badass fissure maker.")
-
-        q_skill.hero = hero
-
-        session.add(q_skill)
+        session.add(item_build)
         session.flush()
-        self.assertTrue(str(q_skill).startswith('<Skill'),
-                        msg="str(SkillModel) must start with '<Skill'")
-        self.assertEqual(hero.skills[0], q_skill)
-        self.assertEqual(q_skill.hero, hero)
+        self.assertTrue(str(item_build).startswith('<ItemBuild'),
+                        msg="str(ItemBuildModel) must start with '<ItemBuild'")
+        
+    def testBuildItemModel(self):
+        session = self.Session()    
+
+        item = ItemModel(id=5768,
+                         name="Sword of 1,000 Truths",
+                         description="Stan needs this item, GAWD sharon!")
+        session.add(item)
+        
+        item_build = ItemBuildModel(id=5889,
+                                    name="Super Build",
+                                    created=datetime.now(),
+                                    edited=datetime.now())
+        session.add(item_build)
+
+        build_item = BuildItemModel(build_id=5889,
+                                    item_id=5768,
+                                    section="starting")
+        session.add(build_item)
+        session.flush()
+        self.assertTrue(str(build_item).startswith('<BuildItem'),
+                        msg="str(BuildItemModel) must start with '<BuildItem'")
+        self.assertIn(item, item_build.items)
+        self.assertIn(build_item, item.build_items)
+        self.assertIn(build_item, item_build.build_items)
+        self.assertEqual(item, build_item.item)
+        self.assertEqual(item_build, build_item.build)
+    
+    def testCommentModel(self):
+        session = self.Session()
+
+        comment = CommentModel(body="U Suck",
+                               created=datetime.now(),
+                               edited=datetime.now())
+        user = UserModel("jayd3e", "secret", email="jd.dallago@gmail.com")
+        comment.author = user
+        
+        session.add(comment)
+        session.flush()
+        self.assertTrue(str(comment).startswith('<Comment'),
+                        msg="str(CommentModel) must start with '<Comment'")
+        self.assertEqual(comment.author, user)
+        self.assertIn(comment, user.comments)
+
+    def testGroupModel(self):
+        session = self.Session()
+
+        user = UserModel("jayd3e", "secret", email="jd.dallago@gmail.com")
+        group = GroupModel(name="Adminz")
+
+        group.users.append(user)
+
+        session.add(group)
+        session.flush()
+        self.assertTrue(str(group).startswith('<Group'),
+                        msg="str(GroupModel) must start with '<Group'")
+        self.assertIn(group, user.groups)
+        self.assertIn(user, group.users)      

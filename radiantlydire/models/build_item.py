@@ -1,27 +1,27 @@
 from radiantlydire.models.base import Base
-from radiantlydire.models.guide import GuideModel
+from radiantlydire.models.item_build import ItemBuildModel
 from radiantlydire.models.item import ItemModel
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
-class GuideItemModel(Base):
-    __tablename__ = 'guides_items'
+class BuildItemModel(Base):
+    __tablename__ = 'builds_items'
     
     id = Column(Integer, primary_key=True)
-    guide_id = Column(Integer, ForeignKey('guides.id'))
+    build_id = Column(Integer, ForeignKey('item_builds.id'))
     item_id = Column(Integer, ForeignKey('items.id'))
     section = Column(String(50))
     
-    guide = relationship(GuideModel,
-                          backref="guide_item")
+    build = relationship(ItemBuildModel,
+                         backref="build_items")
     item = relationship(ItemModel,
-                         backref="guide_item")
+                        backref="build_items")
 
     def __init__(self, **fields):
         self.__dict__.update(fields)
 
     def __repr__(self):
-        return "<GuideItem('%s', '%s', '%s')>" % (self.guide_id,
+        return "<BuildItem('%s', '%s', '%s')>" % (self.build_id,
                                                   self.item_id,
                                                   self.section)    
