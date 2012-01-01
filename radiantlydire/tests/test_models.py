@@ -6,9 +6,11 @@ from radiantlydire.models.user import UserModel
 from radiantlydire.models.comment import CommentModel
 from radiantlydire.models.hero import HeroModel
 from radiantlydire.models.item import ItemModel
+from radiantlydire.models.item import ItemAttributeModel
 from radiantlydire.models.guide import GuideModel
 from radiantlydire.models.item_item import ItemItemModel
 from radiantlydire.models.skill import SkillModel
+from radiantlydire.models.skill_attribute import SkillAttributeModel
 from radiantlydire.models.skill import SkillNoteModel
 from radiantlydire.models.build_item import BuildItemModel
 from radiantlydire.models.build_skill import BuildSkillModel
@@ -125,10 +127,13 @@ class TestModels(unittest.TestCase):
         q_skill = SkillModel(name="Bammo",
                              image_name="bammo.png",
                              description="This skill owns.")
+        
+        skill_attribute = SkillAttributeModel(name="mana regen",
+                                              value="100%")
+        q_skill.skill_attributes.append(skill_attribute)
 
         hero = HeroModel(name="Earthshaker",
                          description="Badass fissure maker.")
-
         q_skill.hero = hero
 
         session.add(q_skill)
@@ -137,6 +142,8 @@ class TestModels(unittest.TestCase):
                         msg="str(SkillModel) must start with '<Skill'")
         self.assertEqual(hero.skills[0], q_skill)
         self.assertEqual(q_skill.hero, hero)
+        self.assertEqual(q_skill, skill_attribute.skill)
+        self.assertIn(skill_attribute, q_skill.skill_attributes)
     
     def testSkillBuildModel(self):
         session = self.Session()
@@ -196,10 +203,16 @@ class TestModels(unittest.TestCase):
     def testItemModel(self):
         session = self.Session()
 
+        item = ItemModel(name="Sword of 1,000 Truths",
+                         description="Stan needs this item, GAWD sharon!")
+        item_attribute = ItemAttributeModel(name="MANA REGEN",
+                                            value="100%")
+        item.item_attributes.append(item_attribute)
+
         item_tier1 = ItemModel(name="Sword of 1,000 Truths",
                          description="Stan needs this item, GAWD sharon!",
                          tier=1,
-                         tier_parent_id=5689)
+                         parent_id=5689)
 
         item_tier2 = ItemModel(id=5689,
                                name="Sword of 1,000 Truths",
@@ -211,7 +224,9 @@ class TestModels(unittest.TestCase):
         session.flush()
         self.assertTrue(str(item_tier1).startswith('<Item'),
                         msg="str(ItemModel) must start with '<Item'")
-        self.assertEqual(item_tier1.tier_parent, item_tier2)
+        self.assertEqual(item_tier1.parent, item_tier2)
+        self.assertIn(item_attribute, item.item_attributes)
+        self.assertEqual(item_attribute.item, item)
     
     def testItemItemModel(self):
         session = self.Session()
@@ -329,4 +344,4 @@ class TestModels(unittest.TestCase):
         self.assertTrue(str(group).startswith('<Group'),
                         msg="str(GroupModel) must start with '<Group'")
         self.assertIn(group, user.groups)
-        self.assertIn(user, group.users)      
+        self.assertIn(user, group.users)

@@ -1,4 +1,5 @@
 from radiantlydire.models.base import Base
+from radiantlydire.models.item_attribute import ItemAttributeModel
 from sqlalchemy import ForeignKey
 from sqlalchemy import Column, Integer, String, Date, DateTime, Boolean, ForeignKey
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -41,17 +42,18 @@ class ItemModel(Base):
 
     cooldown = Column(Integer)
     mana_cost = Column(Integer)
-    tier = Column(Integer)
-    tier_parent_id = Column(Integer, ForeignKey('items.id'))
+    tier = Column(Integer, default=1)
+    parent_id = Column(Integer, ForeignKey('items.id'))
     description = Column(String(1000))
     active = Column(String(1000))
     passive = Column(String(1000))
     use = Column(String(1000))
     sub_description = Column(String(1000))
 
-    tier_parent = relationship("ItemModel", remote_side=[id])
+    parent = relationship("ItemModel", remote_side=[id])
     builds = association_proxy('requires_items', 'builds_into')
     requires = association_proxy('builds_into_items', 'requires')
+    item_attributes = relationship(ItemAttributeModel, backref="item")
     
     def __init__(self, **fields):
         self.__dict__.update(fields)
@@ -94,7 +96,7 @@ class ItemModel(Base):
                                              self.cooldown,
                                              self.mana_cost,
                                              self.tier,
-                                             self.tier_parent,
+                                             self.parent_id,
                                              self.description,
                                              self.active,
                                              self.passive,
