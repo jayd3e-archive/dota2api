@@ -10,6 +10,7 @@ from radiantlydire.models.item import ItemAttributeModel
 from radiantlydire.models.guide import GuideModel
 from radiantlydire.models.item_item import ItemItemModel
 from radiantlydire.models.skill import SkillModel
+from radiantlydire.models.skill_level import SkillLevelModel
 from radiantlydire.models.skill_attribute import SkillAttributeModel
 from radiantlydire.models.skill import SkillNoteModel
 from radiantlydire.models.build_item import BuildItemModel
@@ -120,18 +121,17 @@ class TestModels(unittest.TestCase):
         self.assertEqual(hero, guide.hero)
         self.assertEqual(hero.skills[0], q_skill)
         self.assertEqual(q_skill.hero, hero)
-
+    
     def testSkillModel(self):
         session = self.Session()
 
         q_skill = SkillModel(name="Bammo",
                              image_name="bammo.png",
                              description="This skill owns.")
-        
-        skill_attribute = SkillAttributeModel(name="mana regen",
-                                              value="100%")
-        q_skill.skill_attributes.append(skill_attribute)
 
+        skill_level = SkillLevelModel(level =1, cooldown=30, mana_cost=75)
+        q_skill.skill_levels.append(skill_level)
+        
         hero = HeroModel(name="Earthshaker",
                          description="Badass fissure maker.")
         q_skill.hero = hero
@@ -142,8 +142,26 @@ class TestModels(unittest.TestCase):
                         msg="str(SkillModel) must start with '<Skill'")
         self.assertEqual(hero.skills[0], q_skill)
         self.assertEqual(q_skill.hero, hero)
-        self.assertEqual(q_skill, skill_attribute.skill)
-        self.assertIn(skill_attribute, q_skill.skill_attributes)
+        self.assertIn(skill_level, q_skill.skill_levels)
+        self.assertEqual(skill_level.skill, q_skill)
+
+    def testSkillLevelModel(self):
+        session = self.Session()
+
+        q_skill_level = SkillLevelModel(name="Bammo",
+                                        image_name="bammo.png",
+                                        description="This skill owns.")
+        
+        skill_attribute = SkillAttributeModel(name="mana regen",
+                                              value="100%")
+        q_skill_level.skill_attributes.append(skill_attribute)
+
+        session.add(q_skill_level)
+        session.flush()
+        self.assertTrue(str(q_skill_level).startswith('<SkillLevel'),
+                        msg="str(SkillLevelModel) must start with '<SkillLevel'")
+        self.assertEqual(q_skill_level, skill_attribute.skill)
+        self.assertIn(skill_attribute, q_skill_level.skill_attributes)
     
     def testSkillBuildModel(self):
         session = self.Session()
@@ -158,10 +176,11 @@ class TestModels(unittest.TestCase):
     def testBuildSkillModel(self):
         session = self.Session()    
 
-        skill = SkillModel(id=5768,
-                           name="Skill of the Mighty",
-                           description="Kills a hero instantly.")
-        session.add(skill)
+        skill_level = SkillLevelModel(id=5006,
+                                      level=1,
+                                      cooldown=30,
+                                      mana_cost=75)
+        session.add(skill_level)
         
         skill_build = SkillBuildModel(id=5889,
                                       name="Super Build",
@@ -170,16 +189,16 @@ class TestModels(unittest.TestCase):
         session.add(skill_build)
 
         build_skill = BuildSkillModel(build_id=5889,
-                                     skill_id=5768,
-                                     level="starting")
+                                      skill_level_id=5006,
+                                      level="starting")
         session.add(build_skill)
         session.flush()
         self.assertTrue(str(build_skill).startswith('<BuildSkill'),
                         msg="str(BuildSkillModel) must start with '<BuildSkill'")
-        self.assertIn(skill, skill_build.skills)
-        self.assertIn(build_skill, skill.build_skills)
+        self.assertIn(skill_level, skill_build.skills)
+        self.assertIn(build_skill, skill_level.build_skills)
         self.assertIn(build_skill, skill_build.build_skills)
-        self.assertEqual(skill, build_skill.skill)
+        self.assertEqual(skill_level, build_skill.skill)
         self.assertEqual(skill_build, build_skill.build)
 
     def testSkillNoteModel(self):

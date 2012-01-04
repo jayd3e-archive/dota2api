@@ -115,17 +115,12 @@ def upgrade():
         sa.Column('name', sa.String(length=100)),
         sa.Column('image_name', sa.String(length=100)),
         sa.Column('description', sa.String(length=1000)),
-        sa.Column('cooldown', sa.Integer()),
-        sa.Column('mana_cost', sa.Integer()),
         sa.Column('ability_type', sa.String(length=50)),
         sa.Column('targeting_type', sa.String(length=50)),
         sa.Column('allowed_targets', sa.String(length=50)),
-        sa.Column('level', sa.Integer()),
         sa.Column('damage_type', sa.Integer()),
-        sa.Column('parent_id', sa.Integer()),
         sa.Column('hero_id', sa.Integer()),
-        sa.ForeignKeyConstraint(['hero_id'], ['heroes.id'], ),
-        sa.ForeignKeyConstraint(['parent_id'], ['skills.id'], )
+        sa.ForeignKeyConstraint(['hero_id'], ['heroes.id'], )
     )
 
     op.create_table('guides',
@@ -162,6 +157,16 @@ def upgrade():
         sa.ForeignKeyConstraint(['item_id'], ['items.id'], )
     )
     
+    op.create_table('skill_levels',
+        sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
+        sa.Column('cooldown', sa.Integer()),
+        sa.Column('mana_cost', sa.Integer()),
+        sa.Column('level', sa.Integer()),
+        sa.Column('parent_id', sa.Integer()),
+        sa.Column('skill_id', sa.Integer()),
+        sa.ForeignKeyConstraint(['skill_id'], ['skills.id'], ),
+        sa.ForeignKeyConstraint(['parent_id'], ['skill_levels.id'], )
+    )
     op.create_table('skill_notes',
         sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
         sa.Column('skill_id', sa.Integer()),
@@ -201,6 +206,7 @@ def downgrade():
     op.drop_table('builds_skills')
     op.drop_table('skill_builds')
     op.drop_table('skill_notes')
+    op.drop_table('skill_levels')
     op.drop_table('builds_items')
     op.drop_table('item_builds')
     op.drop_table('items_items')

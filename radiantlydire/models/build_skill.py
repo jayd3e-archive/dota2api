@@ -1,6 +1,6 @@
 from radiantlydire.models.base import Base
 from radiantlydire.models.skill_build import SkillBuildModel
-from radiantlydire.models.skill import SkillModel
+from radiantlydire.models.skill_level import SkillLevelModel
 from sqlalchemy import Column, Integer, String, Date, DateTime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -10,12 +10,12 @@ class BuildSkillModel(Base):
     
     id = Column(Integer, primary_key=True)
     build_id = Column(Integer, ForeignKey('skill_builds.id'))
-    skill_id = Column(Integer, ForeignKey('skills.id'))
+    skill_level_id = Column(Integer, ForeignKey('skill_levels.id'))
     level = Column(String(50))
     
     build = relationship(SkillBuildModel,
                          backref="build_skills")
-    skill = relationship(SkillModel,
+    skill = relationship(SkillLevelModel,
                          backref="build_skills")
 
     def __init__(self, **fields):
@@ -23,5 +23,5 @@ class BuildSkillModel(Base):
 
     def __repr__(self):
         return "<BuildSkill('%s', '%s', '%s')>" % (self.build_id,
-                                                   self.skill_id,
+                                                   self.skill_level_id,
                                                    self.level)    

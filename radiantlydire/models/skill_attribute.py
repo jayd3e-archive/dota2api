@@ -8,7 +8,7 @@ class SkillAttributeModel(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     value = Column(String(100))
-    skill_id = Column(Integer, ForeignKey('skills.id'))
+    skill_level_id = Column(Integer, ForeignKey('skill_levels.id'))
     
     def __init__(self, **fields):
         self.__dict__.update(fields)

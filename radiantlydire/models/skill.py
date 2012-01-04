@@ -1,6 +1,6 @@
 from radiantlydire.models.base import Base
 from radiantlydire.models.skill_note import SkillNoteModel
-from radiantlydire.models.skill_attribute import SkillAttributeModel
+from radiantlydire.models.skill_level import SkillLevelModel
 from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -11,19 +11,14 @@ class SkillModel(Base):
     name = Column(String(100))
     image_name = Column(String(100))
     description = Column(String(1000))
-    cooldown = Column(Integer)
-    mana_cost = Column(Integer)
     ability_type = Column(String(50))
     targeting_type = Column(String(50))
     allowed_targets = Column(String(50))
-    level = Column(Integer)
     damage_type = Column(Integer)
-    parent_id = Column(Integer, ForeignKey('skills.id'))
     hero_id = Column(Integer, ForeignKey('heroes.id'))
 
-    skill_parent = relationship("SkillModel", remote_side=[id])
     skill_notes = relationship(SkillNoteModel, backref="skill")
-    skill_attributes = relationship(SkillAttributeModel, backref="skill")
+    skill_levels = relationship(SkillLevelModel, backref="skill")
     
     def __init__(self, **fields):
         self.__dict__.update(fields)
