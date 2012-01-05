@@ -7,7 +7,9 @@ class SkillAttributeModel(Base):
     
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    value = Column(String(100))
+    string = Column(String(100))
+    integer = Column(Integer)
+    percentage = Column(Integer)
     skill_level_id = Column(Integer, ForeignKey('skill_levels.id'))
     
     def __init__(self, **fields):
