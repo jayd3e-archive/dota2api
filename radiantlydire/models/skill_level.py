@@ -1,6 +1,6 @@
 from radiantlydire.models.base import Base
 from radiantlydire.models.skill_attribute import SkillAttributeModel
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, Date, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
 class SkillLevelModel(Base):
@@ -9,7 +9,10 @@ class SkillLevelModel(Base):
     id = Column(Integer, primary_key=True)
     level = Column(Integer)
     cooldown = Column(Integer)
+    cooldown_float = Column(Float)
     mana_cost = Column(Integer)
+    mana_cost_per_second = Column(Integer)
+    mana_cost_formula = Column(String)
     parent_id = Column(Integer, ForeignKey('skill_levels.id'))
     skill_id = Column(Integer, ForeignKey('skills.id'))
 

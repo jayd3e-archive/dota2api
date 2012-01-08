@@ -142,6 +142,17 @@ def upgrade():
         sa.ForeignKeyConstraint(['builds_id'], ['items.id'], ),
         sa.ForeignKeyConstraint(['requires_id'], ['items.id'], )
     )
+    op.create_table('item_attributes',
+        sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
+        sa.Column('name', sa.String(100)),
+        sa.Column('string', sa.String(100)),
+        sa.Column('integer', sa.Integer()),
+        sa.Column('float', sa.Float()),
+        sa.Column('percentage', sa.Integer()),
+        sa.Column('formula', sa.String(100)),
+        sa.Column('item_id', sa.Integer()),
+        sa.ForeignKeyConstraint(['item_id'], ['items.id'], )
+    )
     op.create_table('item_builds',
         sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
         sa.Column('name', sa.String(length=100)),
@@ -166,6 +177,17 @@ def upgrade():
         sa.Column('skill_id', sa.Integer()),
         sa.ForeignKeyConstraint(['skill_id'], ['skills.id'], ),
         sa.ForeignKeyConstraint(['parent_id'], ['skill_levels.id'], )
+    )
+    op.create_table('skill_attributes',
+        sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
+        sa.Column('name', sa.String(100)),
+        sa.Column('string', sa.String(100)),
+        sa.Column('integer', sa.Integer()),
+        sa.Column('float', sa.Float()),
+        sa.Column('percentage', sa.Integer()),
+        sa.Column('formula', sa.String(100)),
+        sa.Column('skill_level_id', sa.Integer()),
+        sa.ForeignKeyConstraint(['skill_level_id'], ['skill_levels.id'], )
     )
     op.create_table('skill_notes',
         sa.Column('id', sa.Integer(), nullable=False, primary_key=True),
@@ -206,9 +228,11 @@ def downgrade():
     op.drop_table('builds_skills')
     op.drop_table('skill_builds')
     op.drop_table('skill_notes')
+    op.drop_table('skill_attributes')
     op.drop_table('skill_levels')
     op.drop_table('builds_items')
     op.drop_table('item_builds')
+    op.drop_table('item_attributes')
     op.drop_table('items_items')
     op.drop_table('guides')
     op.drop_table('skills')
