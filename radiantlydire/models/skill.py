@@ -14,7 +14,7 @@ class SkillModel(Base):
     ability_type = Column(String(50))
     targeting_type = Column(String(50))
     allowed_targets = Column(String(50))
-    damage_type = Column(Integer)
+    damage_type = Column(String(50))
     hero_id = Column(Integer, ForeignKey('heroes.id'))
 
     skill_notes = relationship(SkillNoteModel, backref="skill")

@@ -118,7 +118,7 @@ def upgrade():
         sa.Column('ability_type', sa.String(length=50)),
         sa.Column('targeting_type', sa.String(length=50)),
         sa.Column('allowed_targets', sa.String(length=50)),
-        sa.Column('damage_type', sa.Integer()),
+        sa.Column('damage_type', sa.String(length=50)),
         sa.Column('hero_id', sa.Integer()),
         sa.ForeignKeyConstraint(['hero_id'], ['heroes.id'], )
     )
