@@ -19,8 +19,15 @@ from radiantlydire.resources import Site
 def main(global_config, **settings):
         config = Configurator(settings=settings,
                               root_factory=Site)
-                          
-        config.scan('d2')
+        config.add_static_view(name='static', path='radiantlydire:static')
+
+        # Api Routes
+        config.add_route('search', '/search')
+
+        # Main Routes
+        config.add_route('main', '/*')
+
+        config.scan('radiantlydire')
         return config.make_wsgi_app()
 
 if __name__ == '__main__':
