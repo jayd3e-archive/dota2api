@@ -1,10 +1,10 @@
-from radiantlydire.models.base import Base
-from sqlalchemy import Column, Integer, Float, String, Date, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from dota2api.models.base import Base
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
+
 
 class ItemAttributeModel(Base):
     __tablename__ = 'item_attributes'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     string = Column(String(100))
@@ -13,7 +13,7 @@ class ItemAttributeModel(Base):
     percentage = Column(Integer)
     formula = Column(String(100))
     item_id = Column(Integer, ForeignKey('items.id'))
-    
+
     def __init__(self, **fields):
         self.__dict__.update(fields)
 

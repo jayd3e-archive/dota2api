@@ -1,13 +1,14 @@
-from radiantlydire.models.base import Base
-from radiantlydire.models.item_attribute import ItemAttributeModel
+from dota2api.models.base import Base
+from dota2api.models.item_attribute import ItemAttributeModel
 from sqlalchemy import ForeignKey
-from sqlalchemy import Column, Integer, String, Date, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 
+
 class ItemModel(Base):
     __tablename__ = 'items'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     vendor = Column(String(100))
@@ -54,7 +55,7 @@ class ItemModel(Base):
     builds = association_proxy('requires_items', 'builds_into')
     requires = association_proxy('builds_into_items', 'requires')
     item_attributes = relationship(ItemAttributeModel, backref="item")
-    
+
     def __init__(self, **fields):
         self.__dict__.update(fields)
 

@@ -1,16 +1,16 @@
 import os
 from hashlib import sha1
-from radiantlydire.models.base import Base
-from radiantlydire.models.group  import GroupModel
-from radiantlydire.models.user_group  import UserGroupModel
-from radiantlydire.models.guide  import GuideModel
-from radiantlydire.models.comment import CommentModel
-from sqlalchemy import Column, Integer, String, Date, DateTime
+from dota2api.models.base import Base
+from dota2api.models.group import GroupModel
+from dota2api.models.guide import GuideModel
+from dota2api.models.comment import CommentModel
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
+
 
 class UserModel(Base):
     __tablename__ = 'users'
-    
+
     id = Column(Integer, primary_key=True)
     username = Column(String(50))
     email = Column(String(100))
@@ -32,7 +32,7 @@ class UserModel(Base):
 
     def _set_password(self, password):
         hashed_password = password
-        
+
         if isinstance(password, unicode):
             password_8bit = password.encode('UTF-8')
         else:

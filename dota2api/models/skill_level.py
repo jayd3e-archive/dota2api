@@ -1,11 +1,12 @@
-from radiantlydire.models.base import Base
-from radiantlydire.models.skill_attribute import SkillAttributeModel
-from sqlalchemy import Column, Integer, Float, String, Date, DateTime, ForeignKey
+from dota2api.models.base import Base
+from dota2api.models.skill_attribute import SkillAttributeModel
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import relationship
+
 
 class SkillLevelModel(Base):
     __tablename__ = 'skill_levels'
-    
+
     id = Column(Integer, primary_key=True)
     level = Column(Integer)
     cooldown = Column(Integer)

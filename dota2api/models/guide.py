@@ -1,15 +1,15 @@
-from radiantlydire.models.base import Base
-from radiantlydire.models.item_build import ItemBuildModel
-from radiantlydire.models.skill_build import SkillBuildModel
-from radiantlydire.models.comment import CommentModel
+from dota2api.models.base import Base
+from dota2api.models.item_build import ItemBuildModel
+from dota2api.models.skill_build import SkillBuildModel
+from dota2api.models.comment import CommentModel
 from sqlalchemy import ForeignKey
-from sqlalchemy import Column, Integer, String, Date, DateTime
-from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
+
 
 class GuideModel(Base):
     __tablename__ = 'guides'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(20000))
@@ -26,10 +26,10 @@ class GuideModel(Base):
         self.__dict__.update(fields)
 
     def __repr__(self):
-        return "<Guide('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % (self.id, 
+        return "<Guide('%s', '%s', '%s', '%s', '%s', '%s', '%s')>" % (self.id,
                                                                       self.name,
-                                                                      self.description, 
-                                                                      self.created, 
+                                                                      self.description,
+                                                                      self.created,
                                                                       self.edited,
                                                                       self.hero_id,
                                                                       self.user_id)

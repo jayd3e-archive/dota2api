@@ -1,5 +1,6 @@
-from radiantlydire.models.base import Base
-from sqlalchemy import Column, Integer, String, Date, DateTime
+from dota2api.models.base import Base
+from sqlalchemy import Column, Integer, String
+
 
 class GroupModel(Base):
     __tablename__ = 'groups'
@@ -8,7 +9,7 @@ class GroupModel(Base):
 
     def __init__(self, name):
         self.name = name
-    
+
     def __repr__(self):
         return "<Group('%s', '%s')>" % (self.id,
                                         self.name)

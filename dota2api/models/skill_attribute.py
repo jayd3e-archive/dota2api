@@ -1,10 +1,10 @@
-from radiantlydire.models.base import Base
-from sqlalchemy import Column, Integer, Float, String, Date, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from dota2api.models.base import Base
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
+
 
 class SkillAttributeModel(Base):
     __tablename__ = 'skill_attributes'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     string = Column(String(100))
@@ -13,7 +13,7 @@ class SkillAttributeModel(Base):
     percentage = Column(Integer)
     formula = Column(String(100))
     skill_level_id = Column(Integer, ForeignKey('skill_levels.id'))
-    
+
     def __init__(self, **fields):
         self.__dict__.update(fields)
 

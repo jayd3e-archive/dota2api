@@ -1,13 +1,13 @@
-from radiantlydire.models.base import Base
-from radiantlydire.models.guide  import GuideModel
-from radiantlydire.models.skill  import SkillModel
-from sqlalchemy import ForeignKey
-from sqlalchemy import Column, Integer, String, Date, DateTime, Float
+from dota2api.models.base import Base
+from dota2api.models.guide import GuideModel
+from dota2api.models.skill import SkillModel
+from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.orm import relationship
+
 
 class HeroModel(Base):
     __tablename__ = 'heroes'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(1000))

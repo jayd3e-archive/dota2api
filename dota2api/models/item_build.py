@@ -1,11 +1,12 @@
-from radiantlydire.models.base import Base
+from dota2api.models.base import Base
 from sqlalchemy import ForeignKey
-from sqlalchemy import Column, Integer, String, Date, DateTime
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.associationproxy import association_proxy
+
 
 class ItemBuildModel(Base):
     __tablename__ = 'item_builds'
-    
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
     guide_id = Column(Integer, ForeignKey('guides.id'))

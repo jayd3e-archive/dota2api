@@ -1,35 +1,34 @@
-import os
-import base64
 import unittest
 from datetime import datetime
-from radiantlydire.models.user import UserModel
-from radiantlydire.models.comment import CommentModel
-from radiantlydire.models.hero import HeroModel
-from radiantlydire.models.item import ItemModel
-from radiantlydire.models.item import ItemAttributeModel
-from radiantlydire.models.guide import GuideModel
-from radiantlydire.models.item_item import ItemItemModel
-from radiantlydire.models.skill import SkillModel
-from radiantlydire.models.skill_level import SkillLevelModel
-from radiantlydire.models.skill_attribute import SkillAttributeModel
-from radiantlydire.models.skill import SkillNoteModel
-from radiantlydire.models.build_item import BuildItemModel
-from radiantlydire.models.build_skill import BuildSkillModel
-from radiantlydire.models.item_build import ItemBuildModel
-from radiantlydire.models.skill_build import SkillBuildModel
-from radiantlydire.models.group import GroupModel
-from radiantlydire.models.base import initializeBase
+from dota2api.models.user import UserModel
+from dota2api.models.comment import CommentModel
+from dota2api.models.hero import HeroModel
+from dota2api.models.item import ItemModel
+from dota2api.models.item import ItemAttributeModel
+from dota2api.models.guide import GuideModel
+from dota2api.models.item_item import ItemItemModel
+from dota2api.models.skill import SkillModel
+from dota2api.models.skill_level import SkillLevelModel
+from dota2api.models.skill_attribute import SkillAttributeModel
+from dota2api.models.skill import SkillNoteModel
+from dota2api.models.build_item import BuildItemModel
+from dota2api.models.build_skill import BuildSkillModel
+from dota2api.models.item_build import ItemBuildModel
+from dota2api.models.skill_build import SkillBuildModel
+from dota2api.models.group import GroupModel
+from dota2api.models.base import initializeBase
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import engine_from_config
 
+
 class TestModels(unittest.TestCase):
     def setUp(self):
-        settings = {'sqlalchemy.url' : 'sqlite://'}
-        
+        settings = {'sqlalchemy.url': 'sqlite://'}
+
         engine = engine_from_config(settings, 'sqlalchemy.')
         initializeBase(engine)
         self.Session = sessionmaker(bind=engine)
-    
+
     def testUserModel(self):
         session = self.Session()
 
@@ -56,14 +55,14 @@ class TestModels(unittest.TestCase):
         self.assertIn(comment, user.comments)
         self.assertIn(group, user.groups)
         self.assertIn(user, group.users)
-    
+
     def testGuideModel(self):
         session = self.Session()
 
         guide = GuideModel(name="Super Guide",
                            created=datetime.now(),
                            edited=datetime.now())
-        
+
         user = UserModel("jayd3e", "secret", email="jd.dallago@gmail.com")
         guide.author = user
 
@@ -96,7 +95,7 @@ class TestModels(unittest.TestCase):
         self.assertIn(skill_build, guide.skill_builds)
         self.assertEqual(guide, item_build.guide)
         self.assertIn(item_build, guide.item_builds)
-        
+
     def testHeroModel(self):
         session = self.Session()
 
@@ -107,7 +106,7 @@ class TestModels(unittest.TestCase):
                              image_name="bammo.png",
                              description="This skill owns.")
         hero.skills.append(q_skill)
-        
+
         guide = GuideModel(name="Super Guide",
                            created=datetime.now(),
                            edited=datetime.now())
@@ -121,7 +120,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(hero, guide.hero)
         self.assertEqual(hero.skills[0], q_skill)
         self.assertEqual(q_skill.hero, hero)
-    
+
     def testSkillModel(self):
         session = self.Session()
 
@@ -129,9 +128,9 @@ class TestModels(unittest.TestCase):
                              image_name="bammo.png",
                              description="This skill owns.")
 
-        skill_level = SkillLevelModel(level =1, cooldown=30, mana_cost=75)
+        skill_level = SkillLevelModel(level=1, cooldown=30, mana_cost=75)
         q_skill.skill_levels.append(skill_level)
-        
+
         hero = HeroModel(name="Earthshaker",
                          description="Badass fissure maker.")
         q_skill.hero = hero
@@ -151,7 +150,7 @@ class TestModels(unittest.TestCase):
         q_skill_level = SkillLevelModel(name="Bammo",
                                         image_name="bammo.png",
                                         description="This skill owns.")
-        
+
         skill_attribute = SkillAttributeModel(name="mana regen",
                                               value="100%")
         q_skill_level.skill_attributes.append(skill_attribute)
@@ -162,7 +161,7 @@ class TestModels(unittest.TestCase):
                         msg="str(SkillLevelModel) must start with '<SkillLevel'")
         self.assertEqual(q_skill_level, skill_attribute.skill)
         self.assertIn(skill_attribute, q_skill_level.skill_attributes)
-    
+
     def testSkillBuildModel(self):
         session = self.Session()
 
@@ -172,16 +171,16 @@ class TestModels(unittest.TestCase):
         session.flush()
         self.assertTrue(str(skill_build).startswith('<SkillBuild'),
                         msg="str(SkillBuildModel) must start with '<SkillBuild'")
-    
+
     def testBuildSkillModel(self):
-        session = self.Session()    
+        session = self.Session()
 
         skill_level = SkillLevelModel(id=5006,
                                       level=1,
                                       cooldown=30,
                                       mana_cost=75)
         session.add(skill_level)
-        
+
         skill_build = SkillBuildModel(id=5889,
                                       name="Super Build",
                                       created=datetime.now(),
@@ -246,7 +245,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(item_tier1.parent, item_tier2)
         self.assertIn(item_attribute, item.item_attributes)
         self.assertEqual(item_attribute.item, item)
-    
+
     def testItemItemModel(self):
         session = self.Session()
 
@@ -265,7 +264,7 @@ class TestModels(unittest.TestCase):
         items = [item0, item1, item2, item3]
         for item in items:
             session.add(item)
-        
+
         # First Build:
         #    5700
         #     |
@@ -286,7 +285,7 @@ class TestModels(unittest.TestCase):
         item_items = [item_item0, item_item1, item_item2]
         for item_item in item_items:
             session.add(item_item)
-        
+
         session.flush()
         self.assertTrue(str(item_item0).startswith('<ItemItem'),
                         msg="str(ItemItemModel) must start with '<ItemItem'")
@@ -296,7 +295,7 @@ class TestModels(unittest.TestCase):
         self.assertIn(item3, item2.requires)
         self.assertIn(item2, item1.builds)
         self.assertIn(item2, item3.builds)
-    
+
     def testItemBuildModel(self):
         session = self.Session()
 
@@ -306,15 +305,15 @@ class TestModels(unittest.TestCase):
         session.flush()
         self.assertTrue(str(item_build).startswith('<ItemBuild'),
                         msg="str(ItemBuildModel) must start with '<ItemBuild'")
-        
+
     def testBuildItemModel(self):
-        session = self.Session()    
+        session = self.Session()
 
         item = ItemModel(id=5768,
                          name="Sword of 1,000 Truths",
                          description="Stan needs this item, GAWD sharon!")
         session.add(item)
-        
+
         item_build = ItemBuildModel(id=5889,
                                     name="Super Build",
                                     created=datetime.now(),
@@ -333,7 +332,7 @@ class TestModels(unittest.TestCase):
         self.assertIn(build_item, item_build.build_items)
         self.assertEqual(item, build_item.item)
         self.assertEqual(item_build, build_item.build)
-    
+
     def testCommentModel(self):
         session = self.Session()
 
@@ -342,7 +341,7 @@ class TestModels(unittest.TestCase):
                                edited=datetime.now())
         user = UserModel("jayd3e", "secret", email="jd.dallago@gmail.com")
         comment.author = user
-        
+
         session.add(comment)
         session.flush()
         self.assertTrue(str(comment).startswith('<Comment'),

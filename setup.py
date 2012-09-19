@@ -1,4 +1,4 @@
-#RadiantlyDire/setup.py
+#dota2api/setup.py
 import os
 from setuptools import setup
 
@@ -8,7 +8,7 @@ CHANGES = open(os.path.join(here, 'CHANGES')).read()
 
 entry_points = """
       [paste.app_factory]
-      main = radiantlydire:main
+      main = dota2api:main
       """
 
 requires = ['pyramid',
@@ -18,13 +18,13 @@ requires = ['pyramid',
             'alembic',
             'pyramid_beaker']
 
-setup(name='RadiantlyDire',
+setup(name='dota2api',
       version='0.1dev',
       description='',
       long_description=README + '\n\n' + CHANGES,
       install_requires=requires,
       url='http://localhost',
-      packages=['radiantlydire'],
-      test_suite='radiantlydire.tests',
-      entry_points = entry_points
+      packages=['dota2api'],
+      test_suite='dota2api.tests',
+      entry_points=entry_points
 )
